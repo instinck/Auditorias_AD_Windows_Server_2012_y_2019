@@ -35,3 +35,26 @@ Antes de ejecutar los lanzadores en producción, es obligatorio preparar la estr
 3. Crear una subcarpeta obligatoria para el almacenamiento histórico del empaquetador ZIP: `C:\AuditoriaLocal\Reportes_Almacenados`
 
 > ⚠️ **Nota de Seguridad:** Todos los accesos directos y tareas programadas deben configurarse con la opción **"Ejecutar con los privilegios más altos"** para tener acceso de lectura al registro de seguridad de Active Directory.
+
+## 🔒 Configuración Obligatoria del Servidor (Directivas de Auditoría)
+
+Para que los reportes de ambas plataformas extraigan datos reales y no salgan en blanco, es indispensable activar el registro de eventos en Windows Server mediante los siguientes pasos:
+
+### 1. Desbloquear Auditoría Avanzada GPO (Para Server 2012 y 2019)
+1. Abrir la consola de **Administración de Directivas de Grupo** (`gpmc.msc`).
+2. Editar la **Default Domain Controllers Policy** en la carpeta *Domain Controllers*.
+3. Navegar a: *Configuración del equipo ➔ Directivas ➔ Configuración de Windows ➔ Configuración de seguridad ➔ Configuración de política de auditoría avanzada ➔ Políticas de auditoría de sistema ➔ Acceso a DS*.
+4. Habilitar la política **Auditar cambios en el servicio de directorio** (Audit Directory Service Changes) en modo **Correcto** (Success).
+5. Forzar la actualización inmediata en la consola del servidor con el comando: `gpupdate /force`
+
+### 2. Activar el Rastreo de Atributos Finos y Herencia (Para Evidencia Forense)
+Para recopilar el valor real anterior/nuevo en las modificaciones de usuarios:
+1. En la consola de comandos de Windows ejecutada como Administrador, activar la subcategoría:
+   `auditpol /set /subcategory:"Cambios en los servicios de directorio" /success:enable`
+2. En **Usuarios y equipos de Active Directory** (`dsa.msc`), activar las *Características Avanzadas* en el menú *Ver*.
+3. Clic derecho en la **Raíz del Dominio** ➔ *Propiedades* ➔ Pestaña *Seguridad* ➔ *Opciones avanzadas* ➔ Pestaña *Auditoría*.
+4. Agregar una regla para la entidad **Todos** (Everyone), configurando:
+   - **Tipo:** Correcto (Success)
+   - **Se aplica a:** Este objeto y todos los descendientes.
+   - **Permisos:** Marcar la casilla **Escribir todas las propiedades** o *Modificar propiedades*.
+5. Asegurarse de que las Unidades Organizativas (OUs) de producción tengan **Habilitada la Herencia** en su pestaña de seguridad avanzada.
