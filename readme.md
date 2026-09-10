@@ -26,3 +26,12 @@ AuditoriaActiveDirectory/
     ├── Reporte-Contrasenas-2019.ps1
     └── ...
 ```
+## 🛠️ Requisitos de Instalación y Despliegue
+
+Antes de ejecutar los lanzadores en producción, es obligatorio preparar la estructura de archivos en el Servidor (ya sea versión 2012 o 2019):
+
+1. Crear una carpeta dedicada directamente en la raíz del disco local: `C:\AuditoriaLocal`
+2. Copiar dentro de esa carpeta los archivos `.ps1` y `.bat` correspondientes a la versión de tu sistema operativo.
+3. Crear una subcarpeta obligatoria para el almacenamiento histórico del empaquetador ZIP: `C:\AuditoriaLocal\Reportes_Almacenados`
+
+> ⚠️ **Nota de Seguridad:** Todos los accesos directos y tareas programadas deben configurarse con la opción **"Ejecutar con los privilegios más altos"** para tener acceso de lectura al registro de seguridad de Active Directory.
